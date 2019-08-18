@@ -22,6 +22,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
       .subscribe(
         (ingredients: Ingredient[]) => {
           this.ingredients = ingredients;
+          // tslint:disable-next-line: deprecation
           event.preventDefault();
         }
       );
@@ -29,6 +30,10 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
+  }
+
+  onEditItem(index: number) {
+    this.shoppingListService.startedEditing.next(index);
   }
 
 }
