@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DataStorageService } from '../shered/data-storege.service';
 
 @Component({
   selector: 'app-header',
@@ -7,8 +8,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor() {}
+  constructor(private service: DataStorageService) {}
 
   ngOnInit() {
+  }
+
+  onSave() {
+    this.service.put();
+  }
+
+  onFetch() {
+    this.service.get().subscribe();
   }
 }

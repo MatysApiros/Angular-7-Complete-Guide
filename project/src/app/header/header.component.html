@@ -11,6 +11,9 @@
         <li routerLinkActive="active">
           <a routerLink="/shopping-list">Shopping List</a>
         </li>
+        <li routerLinkActive="active">
+          <a routerLink="/auth">Authenticate</a>
+        </li>
       </ul>
       <ul class="nav navbar-nav navbar-righr">
         <li
@@ -19,8 +22,10 @@
           <a class="dropdown-toggle" role="button">Manage<span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li class="manage-options">
-              <a>Save Data</a>
-              <a>Fetch Data</a>
+              <a (click)="onSave()">Save Data</a>
+            </li>
+            <li class="manage-options">
+              <a (click)="onFetch()">Fetch Data</a>
             </li>
           </ul>
         </li>
