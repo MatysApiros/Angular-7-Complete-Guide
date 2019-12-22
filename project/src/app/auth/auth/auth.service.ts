@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, Subject } from 'rxjs';
+import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { User } from '../user.model';
+import { Router } from '@angular/router';
 
 export interface AuthResponseData {
   kind: string;
@@ -19,10 +20,12 @@ export interface AuthResponseData {
 })
 export class AuthService {
 
-  user = new Subject<User>();
+  user = new BehaviorSubject<User>(null);
+  tokeExpirationTimer: any;
 
   constructor(
     private http: HttpClient,
+    private router: Router,
   ) { }
 
   signup(email: string, password: string): Observable<AuthResponseData> {
@@ -57,6 +60,63 @@ export class AuthService {
     );
   }
 
+  logout() {
+    this.user.next(null);
+    this.router.navigate(['/auth']);
+    localStorage.removeItem('userData');
+
+    if (this.tokeExpirationTimer) {
+      clearTimeout(this.tokeExpirationTimer);
+    }
+
+    this.tokeExpirationTimer = null;
+  }
+
+  autoLogin() {
+    const userData: {
+      email: string,
+      id: string,
+      _token: string,
+      _tokenExpiration: string,
+    } = JSON.parse(localStorage.getItem('userData'));
+
+    if (!userData) {
+      return;
+    }
+
+    const loadedUser = new User(
+      userData.email,
+      userData.id,
+      userData._token,
+      new Date(userData._tokenExpiration)
+    );
+
+    if (loadedUser.token) {
+      this.user.next(loadedUser);
+      const expirationDuration = new Date(userData._tokenExpiration).getTime() - new Date().getTime();
+      this.autoLogout(expirationDuration);
+    }
+  }
+
+  autoLogout(expirationDuration: number) {
+    this.tokeExpirationTimer = setTimeout(() => {
+      this.logout();
+    }, expirationDuration);
+  }
+
+  handleAuthentication(email: string, userId: string, token: string, expiresIn: number) {
+    const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
+    const user = new User(
+      userId,
+      email,
+      token,
+      expirationDate,
+    );
+    this.user.next(user);
+    this.autoLogout(expiresIn * 1000);
+    localStorage.setItem('userData', JSON.stringify(user));
+  }
+
   handleError(errorRes: HttpErrorResponse) {
     let error = 'An unknown error occurred!';
     if (!errorRes.error || !errorRes.error.error) {
@@ -76,16 +136,5 @@ export class AuthService {
         break;
     }
     return throwError(error);
-  }
-
-  handleAuthentication(email: string, userId: string, token: string, expiresIn: number) {
-    const expirationDate = new Date(new Date().getTime() + expiresIn * 1000);
-    const user = new User(
-      userId,
-      email,
-      token,
-      expirationDate,
-    );
-    this.user.next(user);
   }
 }
