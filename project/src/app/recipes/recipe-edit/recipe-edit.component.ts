@@ -111,4 +111,8 @@ export class RecipeEditComponent implements OnInit, OnDestroy, AfterViewInit {
       'ingredients': recipeIngredients,
     });
   }
+
+  get controls() {
+    return (<FormArray>this.recipeForm.get('ingredients')).controls;
+  }
 }

@@ -3,6 +3,7 @@ import { RecipesService } from '../recipes/recipes.service';
 import { HttpClient } from '@angular/common/http';
 import { map, tap } from 'rxjs/operators';
 import { Recipe } from '../recipes/recipe.model';
+import { AuthService } from '../auth/auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -12,6 +13,7 @@ export class DataStorageService {
   constructor(
     private http: HttpClient,
     private recipesService: RecipesService,
+    private authService: AuthService,
   ) {}
 
   put() {

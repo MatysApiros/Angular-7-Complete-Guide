@@ -77,9 +77,9 @@
             </div>
           </div>
 
-          <!-- <div
+          <div
             class="row"
-            *ngFor="let ingredient of recipeForm.get('ingredients').controls; let i = index"
+            *ngFor="let ingredient of controls; let i = index"
             [formGroupName]="i"
             style="margin-bottom: 10px;">
             <div class="col-xs-7">
@@ -100,7 +100,7 @@
                 class="btn btn-danger"
                 (click)="onDelete(i)">X</button>
             </div>
-          </div> -->
+          </div>
 
         </div>
       </div>
