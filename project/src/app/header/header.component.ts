@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { DataStorageService } from '../shered/data-storege.service';
 import { AuthService } from '../auth/auth/auth.service';
 import { Subscription } from 'rxjs';
+import { DataStorageService } from '../shared/data-storege.service';
 
 @Component({
   selector: 'app-header',
